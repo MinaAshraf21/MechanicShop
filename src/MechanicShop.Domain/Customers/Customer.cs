@@ -16,14 +16,15 @@ public class Customer : AuditableEntity
   public IEnumerable<Vehicle> Vehicles => _vehicles.AsReadOnly();
 
   private Customer(){}
-  private Customer(Guid id,string name, string? email, string phoneNumber) : base(id)
+  private Customer(Guid id,string name, string? email, string phoneNumber, List<Vehicle> vehicles) : base(id)
   {
     Name = name;
     Email = email;
     PhoneNumber = phoneNumber;
+    _vehicles = vehicles;
   }
 
-  public static Result<Customer> Create(Guid id, string name, string? email, string phoneNumber)
+  public static Result<Customer> Create(Guid id, string name, string? email, string phoneNumber, List<Vehicle> vehicles)
   {
     if(id == Guid.Empty)
     {
@@ -51,7 +52,7 @@ public class Customer : AuditableEntity
     {
       return CustomerErrors.InvalidEmail;
     }
-    return new Customer(Guid.NewGuid(), name, email, phoneNumber);
+    return new Customer(Guid.NewGuid(), name, email, phoneNumber, vehicles);
   }
 
   public Result<Updated> Update(string name, string? email, string phoneNumber)

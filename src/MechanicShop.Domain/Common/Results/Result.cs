@@ -50,7 +50,7 @@ public class Result<TValue> : IResult<TValue>
   private Result(Error error)
   {
     _errors = [error];
-    // IsSuccess = false;
+    IsSuccess = false;
   }
   private Result(List<Error> errors)
   {

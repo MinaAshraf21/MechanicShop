@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MechanicShop.Application.Abstractions;
 
-public interface IDbContext
+public interface IAppDbContext
 {
   DbSet<Customer> Customers { get; }
   DbSet<Vehicle> Vehicles { get; }

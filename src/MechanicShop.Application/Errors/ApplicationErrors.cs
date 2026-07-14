@@ -16,6 +16,7 @@ public static class ApplicationErrors
   public static readonly Error CustomerNotFound = Error.NotFound("Customer.CustomerNotFound", "Customer doesn't exist.");
   public static readonly Error InvoiceNotFound = Error.NotFound("Invoice.InvoiceNotFound", "Invoice doesn't exist.");
 
+  public static readonly Error CustomerExists = Error.Conflict("Customer.CustomerExists", "Customer already exists.");
   public static readonly Error TokenGenerationFailed = Error.Failure("Auth.TokenGenerationFailed", "Failed to generate authentication token.");
   public static readonly Error RefreshTokenExpired = Error.Conflict("Auth.RefreshTokenExpired", "Refresh token is invalid or has expired.");
   public static readonly Error AccessTokenExpiredInvalid = Error.Conflict("Auth.AccessTokenExpiredInvalid", "Access token is invalid.");
