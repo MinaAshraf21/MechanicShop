@@ -9,7 +9,7 @@ public static class CustomerMappers
   public static VehicleDto ToDto(this Vehicle vehicle)
   {
     ArgumentNullException.ThrowIfNull(vehicle);
-    return new VehicleDto(vehicle.Make, vehicle.Model, vehicle.Year, vehicle.LicensePlate);
+    return new VehicleDto(vehicle.Id, vehicle.Make, vehicle.Model, vehicle.Year, vehicle.LicensePlate);
   }
 
   public static List<VehicleDto> ToDtos(this IEnumerable<Vehicle> vehicles)
@@ -22,13 +22,13 @@ public static class CustomerMappers
   public static CustomerDto ToDto(this Customer customer)
   {
     ArgumentNullException.ThrowIfNull(customer);
-    return new CustomerDto(customer.Name, customer.Email,customer.PhoneNumber,customer.Vehicles?.ToDtos() ?? []);
+    return new CustomerDto(customer.Id, customer.Name, customer.Email,customer.PhoneNumber,customer.Vehicles?.ToDtos() ?? []);
   }
 
     public static List<CustomerDto> ToDtos(this IEnumerable<Customer> customers)
   {
     ArgumentNullException.ThrowIfNull(customers);
     // return customers.Select(v => v.ToDto()).ToList();
-    return [.. customers.Select(v => v.ToDto())];
+    return [.. customers.Select(c => c.ToDto())];
   }
 }

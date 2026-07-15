@@ -1,0 +1,13 @@
+using MechanicShop.Application.Abstractions;
+using MechanicShop.Application.Features.Customers.Dtos;
+using MechanicShop.Domain.Common.Results;
+using MediatR;
+
+namespace MechanicShop.Application.Features.Customers.Queries.GetCustomerById;
+
+public sealed record GetCustomerByIdQuery(Guid CustomerId) : ICachedQuery<Result<CustomerDto>>
+{
+  public string CacheKey => $"customer_{CustomerId}";
+  public string[] Tags => ["customer"];
+  public TimeSpan Expiration => TimeSpan.FromMinutes(10);
+}

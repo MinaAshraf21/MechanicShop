@@ -86,4 +86,22 @@ public class Customer : AuditableEntity
 
     return Result.Updated;
   }
+
+  public Result<Updated> UpdateParts(List<Vehicle> incomingVehicles)
+  {
+    _vehicles.RemoveAll(v => incomingVehicles.All(iv => iv.Id != v.Id));
+    foreach (var v in incomingVehicles)
+    {
+      var existingVehicle = _vehicles.FirstOrDefault(e => v.Id == e.Id);
+      if(existingVehicle is null)
+        _vehicles.Add(v);
+      else
+      {
+        var updateVehicleResult = existingVehicle.Update(v.Make, v.Model, v.Year, v.LicensePlate);
+        if(updateVehicleResult.IsFailure)
+          return updateVehicleResult.Errors!;
+      }
+    }
+    return Result.Updated;
+  }
 }

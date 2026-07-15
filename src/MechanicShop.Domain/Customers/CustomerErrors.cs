@@ -9,4 +9,5 @@ public static class CustomerErrors
   public static Error InvalidPhoneNumber => Error.Validation("CustomerErrors.InvalidPhoneNumber", "Phone number must be 7–15 digits and may start with '+'.");
   public static Error EmailRequired => Error.Validation("CustomerErrors.EmailRequired", "Customer email is required.");
   public static Error InvalidEmail => Error.Validation("CustomerErrors.InvalidEmail", "Customer email is invalid.");
+  public static Error CannotDeleteCustomerWithWorkOrders => Error.Failure("CustomerErrors.CannotDeleteCustomerWithWorkOrders", "Cannot delete a customer with associated work orders.");
 }

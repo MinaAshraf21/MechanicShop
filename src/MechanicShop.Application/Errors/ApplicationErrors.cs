@@ -13,7 +13,7 @@ public static class ApplicationErrors
   public static readonly Error LaborNotFound = Error.NotFound("Employee.LaborNotFound", "Labor doesn't exist.");
   public static readonly Error RepairTaskNotFound = Error.NotFound("RepairTask.RepairTaskNotFound", "Repair task doesn't exist.");
   public static readonly Error VehicleNotFound = Error.NotFound("Vehicle.VehicleNotFound", "Vehicle doesn't exist.");
-  public static readonly Error CustomerNotFound = Error.NotFound("Customer.CustomerNotFound", "Customer doesn't exist.");
+  public static Error CustomerNotFound(Guid id) => Error.NotFound("Customer.CustomerNotFound", $"Customer with Id: {id} was not found.");
   public static readonly Error InvoiceNotFound = Error.NotFound("Invoice.InvoiceNotFound", "Invoice doesn't exist.");
 
   public static readonly Error CustomerExists = Error.Conflict("Customer.CustomerExists", "Customer already exists.");
