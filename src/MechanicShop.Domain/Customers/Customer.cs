@@ -89,7 +89,8 @@ public class Customer : AuditableEntity
 
   public Result<Updated> UpdateParts(List<Vehicle> incomingVehicles)
   {
-    _vehicles.RemoveAll(v => incomingVehicles.All(iv => iv.Id != v.Id));
+    _vehicles.RemoveAll(v => !incomingVehicles.Any(iv => iv.Id == v.Id));
+    // _vehicles.RemoveAll(v => incomingVehicles.All(iv => iv.Id != v.Id));
     foreach (var v in incomingVehicles)
     {
       var existingVehicle = _vehicles.FirstOrDefault(e => v.Id == e.Id);

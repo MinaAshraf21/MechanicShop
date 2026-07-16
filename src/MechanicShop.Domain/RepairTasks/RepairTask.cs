@@ -43,7 +43,7 @@ public sealed class RepairTask : AuditableEntity
     return new RepairTask(id, name, laborCost, estimatedDuration, parts);
   }
   public Result<Updated> Update(string name, decimal laborCost, RepairDurationInMinutes estimatedDurationInMins)
-{
+  {
     if (string.IsNullOrWhiteSpace(name))
     {
         return RepairTaskErrors.NameRequired;
@@ -64,8 +64,25 @@ public sealed class RepairTask : AuditableEntity
     EstimatedDuration = estimatedDurationInMins;
 
     return Result.Updated;
-}
+  }
 
+  public Result<Updated> UpdateParts(List<Part> incomingParts)
+  {
+    _parts.RemoveAll(p => !incomingParts.Any(np => np.Id == p.Id));
 
+    foreach (var p in incomingParts)
+    {
+      var part = _parts.FirstOrDefault(x => x.Id == p.Id);
+      if(part is null)
+        _parts.Add(p);
+      else
+      {
+        var updatePartResult = part.Update(p.Cost, p.Name!, p.Quantity);
+        if(updatePartResult.IsFailure)
+          return updatePartResult.Errors!;
+      }
+    }
+    return Result.Updated;
+  }
 
 }
