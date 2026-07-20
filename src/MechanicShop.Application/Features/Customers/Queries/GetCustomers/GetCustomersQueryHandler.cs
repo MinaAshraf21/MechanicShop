@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace MechanicShop.Application.Features.Customers.Queries.GetCustomers;
 
-public sealed class GetCustomersQueryHandler(IAppDbContext context, ILogger<GetCustomersQueryHandler> logger)
+public sealed class GetCustomersQueryHandler(IAppDbContext context)
 :  IRequestHandler<GetCustomersQuery, Result<PaginatedResult<CustomerDto>>>
 {
   public async Task<Result<PaginatedResult<CustomerDto>>> Handle(GetCustomersQuery request, CancellationToken cancellationToken)
