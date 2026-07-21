@@ -19,7 +19,8 @@ public static class ApplicationErrors
   public static readonly Error CustomerExists = Error.Conflict("Customer.CustomerExists", "Customer already exists.");
   public static readonly Error TokenGenerationFailed = Error.Failure("Auth.TokenGenerationFailed", "Failed to generate authentication token.");
   public static readonly Error RefreshTokenExpired = Error.Conflict("Auth.RefreshTokenExpired", "Refresh token is invalid or has expired.");
-  public static readonly Error AccessTokenExpiredInvalid = Error.Conflict("Auth.AccessTokenExpiredInvalid", "Access token is invalid.");
+  public static readonly Error InvalidRefreshToken = Error.Conflict("Auth.InvalidRefreshToken", "Refresh token is invalid or has expired.");
+  public static readonly Error ExpiredAccessTokenInvalid = Error.Conflict("Auth.ExpiredAccessTokenInvalid", "Expired access token is invalid.");
   public static readonly Error UserIdClaimInvalid = Error.Conflict("Auth.UserIdClaimInvalid", "Invalid userId claim.");
 
   public static readonly Error VehicleSchedulingConflict = Error.Conflict("Vehicle_Overlapping_WorkOrder", "Vehicle already has an overlapping work order scheduled.");
