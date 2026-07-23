@@ -11,4 +11,6 @@ public interface IIdentityService
 
   Task<bool> IsInRoleAsync(string userId, string role, CancellationToken cancellationToken);
 
+  Task<string> GetUserNameAsync(string userId, CancellationToken cancellationToken);
+
 }
