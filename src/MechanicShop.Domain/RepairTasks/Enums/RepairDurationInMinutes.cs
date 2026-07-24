@@ -8,6 +8,7 @@ public enum RepairDurationInMinutes
   Min60 = 60,
   Min75 = 75,
   Min90 = 90,
+  Min105 = 105,
   Min120 = 120,
   Min150 = 150,
 }
