@@ -165,4 +165,13 @@ public sealed class WorkOrder : AuditableEntity
     return Result.Updated;
   }
 
+  public Result<Updated> Cancel()
+  {
+    if (!CanTransitionTo(State.Cancelled))
+    {
+        return WorkOrderErrors.InvalidStateTransition(State, State.Cancelled);
+    }
+    State = State.Cancelled;
+    return Result.Updated;
+  }
 }
