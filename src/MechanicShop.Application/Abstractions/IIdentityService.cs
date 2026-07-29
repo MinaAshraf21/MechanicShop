@@ -5,12 +5,12 @@ namespace MechanicShop.Application.Abstractions;
 
 public interface IIdentityService
 {
-  Task<Result<AppUserDto>> GetUserByIdAsync(string userId, CancellationToken cancellationToken);
+  Task<Result<AppUserDto>> GetUserByIdAsync(string userId);
 
-  Task<Result<AppUserDto>> AuthenticateAsync(string email, string password, CancellationToken cancellationToken);
+  Task<Result<AppUserDto>> AuthenticateAsync(string email, string password);
 
   Task<bool> IsInRoleAsync(string userId, string role, CancellationToken cancellationToken);
 
-  Task<string> GetUserNameAsync(string userId, CancellationToken cancellationToken);
+  Task<string?> GetUserNameAsync(string userId);
 
 }

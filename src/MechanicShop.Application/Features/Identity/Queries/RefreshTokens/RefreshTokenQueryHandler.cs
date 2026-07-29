@@ -34,7 +34,7 @@ public sealed class RefreshTokenQueryHandler(
       return ApplicationErrors.UserIdClaimInvalid;
     }
 
-    var userResult = await identityService.GetUserByIdAsync(userId, cancellationToken);
+    var userResult = await identityService.GetUserByIdAsync(userId);
     if(userResult.IsFailure)
     {
       logger.LogError("Get user by id error occurred {errorDesc}", userResult.TopError.Description);

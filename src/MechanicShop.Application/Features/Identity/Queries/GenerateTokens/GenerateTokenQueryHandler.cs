@@ -14,7 +14,7 @@ public sealed class GenerateTokenQueryHandler(
 {
   public async Task<Result<TokenResponse>> Handle(GenerateTokenQuery request, CancellationToken cancellationToken)
   {
-    var authResult = await identityService.AuthenticateAsync(request.Email, request.Password, cancellationToken);
+    var authResult = await identityService.AuthenticateAsync(request.Email, request.Password);
 
     if (authResult.IsFailure)
     {
