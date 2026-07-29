@@ -5,7 +5,7 @@ namespace MechanicShop.Application.Abstractions;
 
 public interface IWorkOrderPolicy
 {
-  Task<bool> IsLaborOccupied(Guid LaborId, Guid excludedWorkOrderId, DateTimeOffset startAtUtc, DateTimeOffset endAtUtc);
+  Task<bool> IsLaborOccupied(Guid LaborId, Guid excludedWorkOrderId, DateTimeOffset startAtUtc, DateTimeOffset endAtUtc, CancellationToken ct = default);
   bool IsOutsideOperatingHours(DateTimeOffset startAt, TimeSpan duration);
   Task<bool> IsVehicleAlreadyScheduled(Guid vehicleId, DateTimeOffset startAt, DateTimeOffset endAt, Guid? excludedWorkOrderId = null);
   Task<Result<Success>> CheckSpotAvailabilityAsync(Spot spot, DateTimeOffset startAt, DateTimeOffset endAt, Guid? excludeWorkOrderId = null, CancellationToken ct = default);
