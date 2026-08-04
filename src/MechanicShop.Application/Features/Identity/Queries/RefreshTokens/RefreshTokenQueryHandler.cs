@@ -44,12 +44,7 @@ public sealed class RefreshTokenQueryHandler(
     var refreshToken = await context.RefreshTokens
                                         .FirstOrDefaultAsync(r => r.Token == request.RefreshToken && r.UserId == userId);
 
-    if(refreshToken is null)
-    {
-      logger.LogError("Invalid refresh token for userId: {userId}.", userId);
-      return ApplicationErrors.InvalidRefreshToken;
-    }
-    if(refreshToken.ExpiresOnUtc < DateTime.UtcNow)
+    if(refreshToken is null || refreshToken.ExpiresOnUtc < DateTime.UtcNow)
     {
       logger.LogError("Refresh token has expired.");
       return ApplicationErrors.RefreshTokenExpired;

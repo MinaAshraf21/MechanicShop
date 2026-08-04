@@ -33,7 +33,7 @@ public sealed class PerformanceBehavior<TRequest, TResponse> : IPipelineBehavior
       var userName = string.Empty;
       if(userId is not null)
       {
-        userName = await _identityService.GetUserNameAsync(userId, cancellationToken);
+        userName = await _identityService.GetUserNameAsync(userId);
       }
       _logger.LogWarning(
           "Long Running Request: {Name} ({ElapsedMilliseconds} milliseconds) {@UserId} {@UserName} {@Request}", requestName, elapsedMilliSeconds, userId, userName, request);

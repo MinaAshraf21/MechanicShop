@@ -15,7 +15,7 @@ public class LoggingBehavior<TRequest>(ILogger<TRequest> logger, IUser user, IId
     var userName = string.Empty;
     if (!string.IsNullOrEmpty(userId))
     {
-      userName = await identityService.GetUserNameAsync(userId, cancellationToken);
+      userName = await identityService.GetUserNameAsync(userId);
     }
     logger.LogInformation("Request: {@Name} {@UserId} {@UserName} {@Request}", requestName, userId, userName, request);
   }

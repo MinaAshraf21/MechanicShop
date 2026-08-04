@@ -14,6 +14,8 @@ using Microsoft.Extensions.Caching.Hybrid;
 using MechanicShop.Infrastructure.Services;
 using MechanicShop.Infrastructure.RealTime;
 using MechanicShop.Infrastructure.BackgroundServices;
+using MechanicShop.Infrastructure.Identity.Policies;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MechanicShop.Infrastructure;
 
@@ -57,8 +59,10 @@ public static class DependencyInjection
       };
     });
 
+    services.AddScoped<IAuthorizationHandler, LaborAssignedHandler>();
     services.AddAuthorizationBuilder()
-                      .AddPolicy("ManagerOnly", policy => policy.RequireRole("Manager"));
+                      .AddPolicy("ManagerOnly", policy => policy.RequireRole("Manager"))
+                      .AddPolicy("SelfScopedWorkOrderAccess", policy => policy.AddRequirements(new LaborAssignedRequirement()));
 
     services.AddIdentityCore<AppUser>(options =>
         {

@@ -6,7 +6,7 @@ using MediatR;
 
 namespace MechanicShop.Application.Features.Customers.Queries.GetCustomers;
 
-public sealed record GetCustomersQuery(int PageNumber, int PageSize)
+public sealed record GetCustomersQuery(int PageNumber=1, int PageSize=10)
   : ICachedQuery<Result<PaginatedResult<CustomerDto>>>
 {
   public string CacheKey => "customers";

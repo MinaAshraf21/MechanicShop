@@ -8,9 +8,9 @@ using MediatR;
 namespace MechanicShop.Application.Features.WorkOrders.Queries.GetWorkOrders;
 
 public sealed record GetWorkOrdersQuery(
-    int Page,
-    int PageSize,
-    string? SearchTerm,
+    int Page = 1,
+    int PageSize = 10,
+    string? SearchTerm = "",
     string SortColumn = "createdAt",
     string SortDirection = "asc",
     State? State = null,
