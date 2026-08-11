@@ -8,7 +8,7 @@ namespace MechanicShop.Application.Features.WorkOrders.Dtos;
 public class WorkOrderDto
 {
     public Guid WorkOrderId { get; set; }
-    public Guid InvoiceId { get; set; }
+    public Guid? InvoiceId { get; set; }
     public DateTimeOffset StartAt { get; set; }
     public DateTimeOffset EndAt { get; set; }
     public Spot Spot { get; set; }

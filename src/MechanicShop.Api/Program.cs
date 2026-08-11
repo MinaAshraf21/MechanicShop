@@ -43,9 +43,7 @@ else
 
 app.UseCoreMiddlewares(builder.Configuration);
 app.MapControllers();
-app.UseAntiforgery();
 
-app.MapStaticAssets();
 
 app.MapHub<WorkOrderHub>("/hub/workorders");
 

@@ -15,7 +15,7 @@ using Microsoft.AspNetCore.OutputCaching;
 
 namespace MechanicShop.Api.Controllers;
 
-[Route("/api/v{version:apiVersion}/employees")]
+[Route("/api/v{version:apiVersion}/repair-tasks")]
 [ApiVersion("1.0")]
 public class RepairTaskController(ISender sender) : ApiController
 {

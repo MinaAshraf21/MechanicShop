@@ -33,12 +33,12 @@ public class WorkOrderController(ISender sender) : ApiController
   [EndpointSummary("Retrieves a paginated list of work orders.")]
   [EndpointDescription("Supports filtering by date range, status, vehicle, labor, spot, and searching by term. Pagination and sorting are supported.")]
   [OutputCache(Duration = 60)]
-  public async Task<ActionResult> GetPagedWorkOrders(PageRequest request, CancellationToken ct)
+  public async Task<ActionResult> GetPagedWorkOrders([FromQuery]PageRequest request, CancellationToken ct)
   {
     if(request.Page <= 0)
       request.Page = 1;
     if(request.PageSize <= 0)
-      request.Page = 1;
+      request.PageSize = 10;
 
     var query = new GetWorkOrdersQuery(
       request.Page,
@@ -116,7 +116,7 @@ public class WorkOrderController(ISender sender) : ApiController
   [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
   [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
   [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-  [EndpointName("RelocateWorkOrder")]
+  [EndpointName("AssignLabor")]
   [EndpointSummary("Assigns a labor to a work order.")]
   [EndpointDescription("Associates a labor definition with a specific work order. Only managers can perform this operation.")]
   public async Task<ActionResult> AssignLabor(Guid workOrderId, [FromBody]AssignLaborRequest request, CancellationToken ct)

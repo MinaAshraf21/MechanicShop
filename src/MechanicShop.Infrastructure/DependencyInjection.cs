@@ -57,6 +57,7 @@ public static class DependencyInjection
         ValidIssuer = jwtSettings["Issuer"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Secret"]!))
       };
+      options.TokenValidationParameters = tokenValidationParameters;
     });
 
     services.AddScoped<IAuthorizationHandler, LaborAssignedHandler>();

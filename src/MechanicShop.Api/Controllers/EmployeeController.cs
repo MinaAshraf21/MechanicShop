@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace MechanicShop.Api.Controllers;
 
-[Route("/api/v{version:apiVersion}/employees")]
+[Route("/api/v{version:apiVersion}/labors")]
 [ApiVersion("1.0")]
 public class EmployeeController(ISender sender) : ApiController
 {

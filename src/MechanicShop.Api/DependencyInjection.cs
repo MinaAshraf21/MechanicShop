@@ -2,6 +2,9 @@ using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
 using Asp.Versioning;
 using MechanicShop.Api.Infrastructure;
+using MechanicShop.Api.OpenApi.Transformers;
+using MechanicShop.Api.Services;
+using MechanicShop.Application.Abstractions;
 using MechanicShop.Infrastructure.Settings;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.RateLimiting;
@@ -16,8 +19,12 @@ public static class DependencyInjection
 {
   public static IServiceCollection AddPresentation(this IServiceCollection services, IConfiguration configuration)
   {
+    services.Configure<AppSettings>(configuration.GetSection("AppSettings"));
+    QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
+    
     services.AddExceptionHandler<GlobalExceptionHandler>();
     services.AddHttpContextAccessor();
+    services.AddScoped<IUser, CurrentUser>();
     services.AddAppOutputCache();
     services.AddCustomApiVersioning();
     services.AddCustomProblemDetails();
@@ -26,6 +33,7 @@ public static class DependencyInjection
     services.AddAppRateLimiting();
     services.AddConfiguredCors(configuration);
     services.AddSignalR();
+    services.AddApiDocumentation();
     return services;
   }
 
@@ -108,9 +116,11 @@ public static class DependencyInjection
 
   public static IServiceCollection AddControllerWithJsonConfiguration(this IServiceCollection services)
   {
-    services.AddControllers().AddJsonOptions(options => options
-        .JsonSerializerOptions
-        .DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull);
+    services.AddControllers().AddJsonOptions(options =>
+    {
+      options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+      options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
     return services;
   }
 
@@ -130,6 +140,26 @@ public static class DependencyInjection
     return services;
   }
 
+    public static IServiceCollection AddApiDocumentation(this IServiceCollection services)
+    {
+        string[] versions = ["v1"];
+
+        foreach (var version in versions)
+        {
+            services.AddOpenApi(version, options =>
+            {
+                // Versioning config
+                options.AddDocumentTransformer<VersionInfoTransformer>();
+
+                // Security Scheme config
+                options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+                options.AddOperationTransformer<BearerSecuritySchemeTransformer>();
+            });
+        }
+
+        return services;
+    }
+    
   public static IApplicationBuilder UseCoreMiddlewares(this IApplicationBuilder app, IConfiguration configuration)
   {
       // 1. Exception handling should be FIRST to catch all errors

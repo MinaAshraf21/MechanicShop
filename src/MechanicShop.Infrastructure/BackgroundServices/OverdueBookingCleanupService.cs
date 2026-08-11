@@ -20,7 +20,13 @@ public sealed class OverdueBookingCleanupService(
 {
   protected override async Task ExecuteAsync(CancellationToken stoppingToken)
   {
-    using var timer = new PeriodicTimer(TimeSpan.FromMinutes(options.Value.OverdueBookingCleanupFrequencyMinutes));
+    var interval = TimeSpan.FromMinutes(options.Value.OverdueBookingCleanupFrequencyMinutes);
+    if (interval <= TimeSpan.Zero)
+    {
+        logger.LogWarning("Invalid cleanup interval {Interval}; defaulting to 10 minutes.", interval);
+        interval = TimeSpan.FromMinutes(10);
+    }
+    using var timer = new PeriodicTimer(interval);
     while (await timer.WaitForNextTickAsync(stoppingToken))
     {
       logger.LogInformation("Checking overdue work orders at {Now}", timeProvider.GetUtcNow());

@@ -14,7 +14,7 @@ public static class WorkOrderMapper
     {
         ArgumentNullException.ThrowIfNull(entity);
 
-        return new WorkOrderDto
+        var workOrderDto =  new WorkOrderDto
         {
             WorkOrderId = entity.Id,
             Spot = entity.Spot,
@@ -28,9 +28,10 @@ public static class WorkOrderMapper
             TotalLaborCost = entity.Tasks.Sum(p => p.LaborCost),
             TotalCost = entity.Tasks.Sum(rt => rt.TotalCost),
             TotalDurationInMins = entity.Tasks.Sum(rt => (int)rt.EstimatedDuration),
-            InvoiceId = entity.Invoice!.Id,
+            InvoiceId = entity.Invoice?.Id,
             CreatedAt = entity.CreatedAtUtc
         };
+        return workOrderDto;
     }
 
     public static List<WorkOrderDto> ToDtos(this IEnumerable<WorkOrder> entities)

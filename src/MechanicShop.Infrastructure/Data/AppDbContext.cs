@@ -8,13 +8,14 @@ using MechanicShop.Domain.RepairTasks;
 using MechanicShop.Domain.RepairTasks.Parts;
 using MechanicShop.Domain.WorkOrders;
 using MechanicShop.Domain.WorkOrders.Billing;
+using MechanicShop.Infrastructure.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace MechanicShop.Infrastructure.Data;
 
-public class AppDbContext(DbContextOptions<AppDbContext> options, IMediator mediator) : IdentityDbContext(options), IAppDbContext
+public class AppDbContext(DbContextOptions<AppDbContext> options, IMediator mediator) : IdentityDbContext<AppUser>(options), IAppDbContext
 {
   public DbSet<Customer> Customers => Set<Customer>();
 
@@ -34,8 +35,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options, IMediator medi
 
   protected override void OnModelCreating(ModelBuilder builder)
   {
-    builder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
     base.OnModelCreating(builder);
+    builder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
   }
 
   public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

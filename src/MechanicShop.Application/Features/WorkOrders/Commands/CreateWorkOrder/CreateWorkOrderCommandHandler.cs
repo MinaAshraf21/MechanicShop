@@ -34,11 +34,11 @@ public sealed class CreateWorkOrderCommandHandler(
     var labor = await context.Employees
                           .AsNoTracking()
                           .Where(e => e.Role == Role.Labor)
-                          .FirstOrDefaultAsync(v => v.Id == request.VehicleId);
+                          .FirstOrDefaultAsync(v => v.Id == request.laborId);
     if(labor is null)
     {
       logger.LogWarning("Labor with Id: {id} was not found", request.laborId);
-      return ApplicationErrors.VehicleNotFound;
+      return ApplicationErrors.LaborNotFound;
     }
 
     var repairTasks = await context.RepairTasks
@@ -97,8 +97,6 @@ public sealed class CreateWorkOrderCommandHandler(
       return createWorkOrderResult.Errors!;
 
     var workOrder = createWorkOrderResult.Value;
-    workOrder.Vehicle = vehicle;
-    workOrder.Labor = labor;
 
     workOrder.AddDomainEvent(new WorkOrderCollectionModified());
 

@@ -10,6 +10,7 @@ using MechanicShop.Domain.WorkOrders.Enums;
 using MechanicShop.Infrastructure.Identity;
 
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace MechanicShop.Infrastructure.Data;
@@ -21,14 +22,14 @@ public class ApplicationDbContextInitializer(
     RoleManager<IdentityRole> roleManager)
 {
     // Fixed ids so re-seeding is idempotent across runs/environments.
-    private static readonly SeedUser Manager = new("19a59129-6c20-417a-834d-11a208d32d96", "pm@localhost", "Primary", "Manager", Role.Manager);
+    private static readonly SeedUser Manager = new("19a59129-6c20-417a-834d-11a208d32d96", "Pm@localhost1", "Primary", "Manager", Role.Manager);
 
     private static readonly SeedUser[] Labors =
     [
-        new("b6327240-0aea-46fc-863a-777fc4e42560", "john.labor@localhost", "John", "S.", Role.Labor),
-        new("8104ab20-26c2-4651-b1de-c0baf04dbbd9", "peter.labor@localhost", "Peter", "R.", Role.Labor),
-        new("e17c83de-1089-4f19-bf79-5f789133d37f", "kevin.labor@localhost", "Kevin", "M.", Role.Labor),
-        new("54cd01ba-b9ae-4c14-bab6-f3df0219ba4c", "suzan.labor@localhost", "Suzan", "L.", Role.Labor),
+        new("b6327240-0aea-46fc-863a-777fc4e42560", "John.labor@localhost1", "John", "S.", Role.Labor),
+        new("8104ab20-26c2-4651-b1de-c0baf04dbbd9", "Peter.labor@localhost1", "Peter", "R.", Role.Labor),
+        new("e17c83de-1089-4f19-bf79-5f789133d37f", "Kevin.labor@localhost1", "Kevin", "M.", Role.Labor),
+        new("54cd01ba-b9ae-4c14-bab6-f3df0219ba4c", "Suzan.labor@localhost1", "Suzan", "L.", Role.Labor),
     ];
 
     private readonly ILogger<ApplicationDbContextInitializer> _logger = logger;
@@ -40,7 +41,7 @@ public class ApplicationDbContextInitializer(
     {
         try
         {
-            await _context.Database.EnsureCreatedAsync();
+            await _context.Database.MigrateAsync();
         }
         catch (Exception ex)
         {
@@ -88,6 +89,8 @@ public class ApplicationDbContextInitializer(
 
     private async Task EnsureRoleAsync(Role role)
     {
+        if(_roleManager.Roles.Any())
+            return;
         if (_roleManager.Roles.All(r => r.Name != role.ToString()))
         {
             await _roleManager.CreateAsync(new IdentityRole(role.ToString()));
@@ -96,6 +99,8 @@ public class ApplicationDbContextInitializer(
 
     private async Task EnsureUserAsync(SeedUser seed)
     {
+        if(_userManager.Users.Any())
+            return;
         if (_userManager.Users.Any(u => u.Email == seed.Email))
         {
             return;
@@ -109,7 +114,12 @@ public class ApplicationDbContextInitializer(
             EmailConfirmed = true,
         };
 
-        await _userManager.CreateAsync(user, seed.Email);
+        var createUserResult = await _userManager.CreateAsync(user, seed.Email);
+        if (!createUserResult.Succeeded)
+        {
+            var errors = string.Join("; ", createUserResult.Errors.Select(e => $"{e.Code}: {e.Description}"));
+            _logger.LogError("Failed to create user with {Email}: {Errors}", seed.Email, errors);
+        }
         await _userManager.AddToRolesAsync(user, [seed.Role.ToString()]);
     }
 
@@ -125,29 +135,43 @@ public class ApplicationDbContextInitializer(
                 .Select(u => Employee.Create(Guid.Parse(u.Id), u.FirstName, u.LastName, u.Role).Value));
     }
 
-    private void SeedCustomers()
+private void SeedCustomers()
+{
+    if (_context.Customers.Any())
     {
-        if (_context.Customers.Any())
-        {
-            return;
-        }
-
-        List<Vehicle> johnsVehicles =
-        [
-            Vehicle.Create(Guid.Parse("61401e63-007b-4b1c-8914-9eb6e9bd95c5"), "Toyota", "Camry", 2020, "ABC123").Value,
-            Vehicle.Create(Guid.Parse("13c80914-41ad-4d46-b7bb-60f6c89ad01e"), "Honda", "Civic", 2018, "XYZ456").Value,
-        ];
-
-        List<Vehicle> sarahsVehicles =
-        [
-            Vehicle.Create(Guid.Parse("a04f329d-0f5a-46a0-beae-699c034ae401"), "Ford", "Focus", 2021, "DEF789").Value,
-            Vehicle.Create(Guid.Parse("cf60e95b-5752-4c26-aa07-31a34164606c"), "Chevrolet", "Malibu", 2019, "GHI012").Value,
-        ];
-
-        _context.Customers.AddRange(
-            Customer.Create(Guid.Parse("f522bbe5-e3b1-4e2c-a8a3-c41550dcf39d"), "John Doe", "123456789", "john.doe@localhost", johnsVehicles).Value,
-            Customer.Create(Guid.Parse("73a04dd3-c81a-4a54-9882-ef1017eb192d"), "Sarah Peter", "987654321", "sarah.peter@localhost", sarahsVehicles).Value);
+        return;
     }
+
+    List<Vehicle> johnsVehicles =
+    [
+        Vehicle.Create(Guid.Parse("61401e63-007b-4b1c-8914-9eb6e9bd95c5"), "Toyota", "Camry", 2020, "ABC123").Value,
+        Vehicle.Create(Guid.Parse("13c80914-41ad-4d46-b7bb-60f6c89ad01e"), "Honda", "Civic", 2018, "XYZ456").Value,
+    ];
+
+    List<Vehicle> sarahsVehicles =
+    [
+        Vehicle.Create(Guid.Parse("a04f329d-0f5a-46a0-beae-699c034ae401"), "Ford", "Focus", 2021, "DEF789").Value,
+        Vehicle.Create(Guid.Parse("cf60e95b-5752-4c26-aa07-31a34164606c"), "Chevrolet", "Malibu", 2019, "GHI012").Value,
+    ];
+    var johnResult = Customer.Create(Guid.Parse("f522bbe5-e3b1-4e2c-a8a3-c41550dcf39d"), "John Doe", "john.doe@localhost", "123456789", johnsVehicles);
+    var sarahResult = Customer.Create(Guid.Parse("73a04dd3-c81a-4a54-9882-ef1017eb192d"), "Sarah Peter", "sarah.peter@localhost","987654321", sarahsVehicles);
+
+    if (johnResult.IsFailure)
+    {
+        _logger.LogError("Failed to create seed customer John: {Error}", johnResult.Errors);
+    }
+
+    if (sarahResult.IsFailure)
+    {
+        _logger.LogError("Failed to create seed customer Sarah: {Error}", sarahResult.Errors);
+    }
+
+    var customers = new[] { johnResult, sarahResult }
+        .Where(r => r.IsSuccess)
+        .Select(r => r.Value);
+
+    _context.Customers.AddRange(customers);
+}
 
     private void SeedRepairTasks()
     {
@@ -192,11 +216,16 @@ public class ApplicationDbContextInitializer(
 
     private async Task SeedWorkOrdersAsync()
     {
+        
         var repairTasks = _context.RepairTasks.ToList();
         var vehicles = _context.Vehicles.ToList();
         var laborIds = Labors.Select(l => l.Id).ToArray();
         Spot[] spots = [Spot.A, Spot.B, Spot.C, Spot.D];
-
+        if (repairTasks.Count == 0 || vehicles.Count == 0)
+        {
+            _logger.LogWarning("Skipping work order seeding: RepairTasks={RepairTaskCount}, Vehicles={VehicleCount}", repairTasks.Count, vehicles.Count);
+            return;
+        }
         var openTime = TimeSpan.FromHours(12);
         var closeTime = TimeSpan.FromHours(23);
         var startDate = DateTimeOffset.Now.Date.AddDays(1);
