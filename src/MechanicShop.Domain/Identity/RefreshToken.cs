@@ -23,11 +23,11 @@ public sealed class RefreshToken : AuditableEntity
     {
       return RefreshTokenErrors.IdRequired;
     }
-    if (string.IsNullOrEmpty(token))
+    if (string.IsNullOrWhiteSpace(token))
     {
       return RefreshTokenErrors.TokenRequired;
     }
-    if (string.IsNullOrEmpty(userId))
+    if (string.IsNullOrWhiteSpace(userId))
     {
       return RefreshTokenErrors.UserIdRequired;
     }

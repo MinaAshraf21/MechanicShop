@@ -46,7 +46,7 @@ public sealed class UpdateCustomerCommandHandler(
       return customerResult.Errors!;
     }
 
-    var updateResult = customer.UpdateParts(vehicles);
+    var updateResult = customer.UpdateVehicles(vehicles);
     if(updateResult.IsFailure)
       return updateResult.Errors!;
 

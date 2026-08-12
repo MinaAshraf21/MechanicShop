@@ -34,7 +34,7 @@ public sealed class Part : AuditableEntity
     {
       return PartErrors.InvalidQuantity;
     }
-    return new Part(Guid.NewGuid(), cost, name, quantity);
+    return new Part(id, cost, name, quantity);
   }
 
   public Result<Updated> Update(decimal cost, string name, int quantity)

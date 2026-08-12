@@ -145,7 +145,7 @@ public sealed class WorkOrder : AuditableEntity
     {
       return WorkOrderErrors.Readonly;
     }
-    if (Enum.IsDefined(spot))
+    if (!Enum.IsDefined(spot))
     {
       return WorkOrderErrors.SpotInvalid; 
     }

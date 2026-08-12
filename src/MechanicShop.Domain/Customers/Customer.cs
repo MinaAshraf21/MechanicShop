@@ -52,7 +52,7 @@ public class Customer : AuditableEntity
     {
       return CustomerErrors.InvalidEmail;
     }
-    return new Customer(Guid.NewGuid(), name, email, phoneNumber, vehicles);
+    return new Customer(id, name, email, phoneNumber, vehicles);
   }
 
   public Result<Updated> Update(string name, string? email, string phoneNumber)
@@ -87,7 +87,7 @@ public class Customer : AuditableEntity
     return Result.Updated;
   }
 
-  public Result<Updated> UpdateParts(List<Vehicle> incomingVehicles)
+  public Result<Updated> UpdateVehicles(List<Vehicle> incomingVehicles)
   {
     _vehicles.RemoveAll(v => !incomingVehicles.Any(iv => iv.Id == v.Id));
     // _vehicles.RemoveAll(v => incomingVehicles.All(iv => iv.Id != v.Id));

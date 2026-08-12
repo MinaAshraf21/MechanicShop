@@ -8,7 +8,7 @@ public sealed class InvoiceLineItem
   public Guid InvoiceId { get; }
   public string? Description { get; }
   public int LineNumber { get; }
-  public decimal LineTotal { get; }
+  public decimal LineTotal => Quantity * UnitPrice;
   public int Quantity { get; }
   public decimal UnitPrice { get; }
 
@@ -28,7 +28,7 @@ public sealed class InvoiceLineItem
     {
       return InvoiceLineItemErrors.InvoiceIdRequired;
     }
-    if (string.IsNullOrEmpty(description))
+    if (string.IsNullOrWhiteSpace(description))
     {
       return InvoiceLineItemErrors.DescriptionRequired;
     }
