@@ -8,24 +8,22 @@ namespace MechanicShop.Application.Behaviors;
 public sealed class PerformanceBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : notnull
 {
   private readonly ILogger<TRequest> _logger;
-  private readonly Stopwatch _stopwatch;
   private readonly IUser _user;
   private readonly IIdentityService _identityService;
 
-  public PerformanceBehavior(ILogger<TRequest> logger,Stopwatch stopwatch, IUser user, IIdentityService identityService)
+  public PerformanceBehavior(ILogger<TRequest> logger, IUser user, IIdentityService identityService)
   {
     _logger = logger;
-    _stopwatch = stopwatch;
     _user = user;
     _identityService = identityService;
   }
   public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
   {
-    _stopwatch.Start();
+    var stopwatch = Stopwatch.StartNew();
     var response = await next(cancellationToken);
-    _stopwatch.Stop();
+    stopwatch.Stop();
 
-    var elapsedMilliSeconds = _stopwatch.ElapsedMilliseconds;
+    var elapsedMilliSeconds = stopwatch.ElapsedMilliseconds;
     if(elapsedMilliSeconds > 500)
     {
       var userId = _user.Id ?? string.Empty;

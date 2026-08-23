@@ -11,5 +11,5 @@ public sealed class FakeTimeProvider : TimeProvider
 
     public override DateTimeOffset GetUtcNow() => _utcNow;
 
-    public override long GetTimestamp() => _utcNow.ToUnixTimeMilliseconds();
+    // public override long GetTimestamp() => _utcNow.ToUnixTimeMilliseconds();
 }
