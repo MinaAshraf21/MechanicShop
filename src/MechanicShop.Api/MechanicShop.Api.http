@@ -25,7 +25,7 @@
 @tireRotationServiceId = A376B5D1-6B2D-4DD8-883E-D3D1721C1316
 @brakeReplacementServiceId = 4FA0BE55-06F6-4616-B086-E1F0C9354CD8
 
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxOWE1OTEyOS02YzIwLTQxN2EtODM0ZC0xMWEyMDhkMzJkOTYiLCJlbWFpbCI6IlBtQGxvY2FsaG9zdDEiLCJyb2xlIjoiTWFuYWdlciIsIm5iZiI6MTc4NjI0MzI2NCwiZXhwIjoxNzg2MjQzODY0LCJpYXQiOjE3ODYyNDMyNjQsImlzcyI6ImxvY2FsaG9zdCIsImF1ZCI6ImxvY2FsaG9zdCJ9.QY_17WPI0CS87pL5dtJ9Jnqcmri7XkCLnHfEp6QcZmQ
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxOWE1OTEyOS02YzIwLTQxN2EtODM0ZC0xMWEyMDhkMzJkOTYiLCJlbWFpbCI6IlBtQGxvY2FsaG9zdDEiLCJyb2xlIjoiTWFuYWdlciIsIm5iZiI6MTc4OTc4MTQ2NiwiZXhwIjoxNzg5NzgyMDY2LCJpYXQiOjE3ODk3ODE0NjYsImlzcyI6ImxvY2FsaG9zdCIsImF1ZCI6ImxvY2FsaG9zdCJ9.R16gGOa_DXIaup4k_iAWFHW4yTY-061Aw8DwnWv5_pw
 @workorderId = 10a738bf-751a-45b7-bd17-08de4a99ed7f
 # @invoiceId = c3fffd7e-02ee-4e1e-9f8c-71defbd862b0
 
@@ -38,7 +38,7 @@ GET {{baseUrl}}/v1/customers
 Authorization: Bearer {{token}}
 
 ### Get a customer
-GET {{baseUrl}}/v1/customers/{{customerJohnId}}
+GET {{baseUrl}}/v1/customers/fb7b7788-6215-4353-9f27-22889a0b1b01
 Authorization: Bearer {{token}}
 
 ### Get all labors
@@ -77,7 +77,7 @@ Content-Type: application/json
   "vehicleId": "cf60e95b-5752-4c26-aa07-31a34164606c",
   "RepairTasksIds": ["90f2f3ef-3357-439e-9689-628aa08200c1"],
   "laborId": "8104ab20-26c2-4651-b1de-c0baf04dbbd9",
-  "startAt": "2026-08-14T16:00:00Z",
+  "startAt": "2026-12-14T16:00:00Z",
   "duration": "01:00:00"
 }
 
