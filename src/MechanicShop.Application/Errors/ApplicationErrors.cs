@@ -5,7 +5,7 @@ namespace MechanicShop.Application.Errors;
 public static class ApplicationErrors
 {
   public static Error WorkOrderOutsideOperatingHours(DateTimeOffset startUtc, DateTimeOffset endUtc) 
-              => Error.Conflict("ApplicationErrors.WorkOrderOutsideOperatingHours",
+              => Error.Conflict("WorkOrder.WorkOrderOutsideOperatingHours",
                                 $"Work order start time {startUtc} and end time {endUtc} are outside of store opening hours.");
 
   public static readonly Error WorkOrderNotFound = Error.NotFound("WorkOrder.WorkOrderNotFound", "Work order doesn't exist.");

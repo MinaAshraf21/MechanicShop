@@ -21,6 +21,8 @@ public class ApplicationDbContextInitializer(
     UserManager<AppUser> userManager,
     RoleManager<IdentityRole> roleManager)
 {
+    private sealed record SeedUser(string Id, string Email, string FirstName, string LastName, Role Role);
+
     // Fixed ids so re-seeding is idempotent across runs/environments.
     private static readonly SeedUser Manager = new("19a59129-6c20-417a-834d-11a208d32d96", "Pm@localhost1", "Primary", "Manager", Role.Manager);
 
@@ -135,43 +137,43 @@ public class ApplicationDbContextInitializer(
                 .Select(u => Employee.Create(Guid.Parse(u.Id), u.FirstName, u.LastName, u.Role).Value));
     }
 
-private void SeedCustomers()
-{
-    if (_context.Customers.Any())
+    private void SeedCustomers()
     {
-        return;
+        if (_context.Customers.Any())
+        {
+            return;
+        }
+
+        List<Vehicle> johnsVehicles =
+        [
+            Vehicle.Create(Guid.Parse("61401e63-007b-4b1c-8914-9eb6e9bd95c5"), "Toyota", "Camry", 2020, "ABC123").Value,
+            Vehicle.Create(Guid.Parse("13c80914-41ad-4d46-b7bb-60f6c89ad01e"), "Honda", "Civic", 2018, "XYZ456").Value,
+        ];
+
+        List<Vehicle> sarahsVehicles =
+        [
+            Vehicle.Create(Guid.Parse("a04f329d-0f5a-46a0-beae-699c034ae401"), "Ford", "Focus", 2021, "DEF789").Value,
+            Vehicle.Create(Guid.Parse("cf60e95b-5752-4c26-aa07-31a34164606c"), "Chevrolet", "Malibu", 2019, "GHI012").Value,
+        ];
+        var johnResult = Customer.Create(Guid.Parse("f522bbe5-e3b1-4e2c-a8a3-c41550dcf39d"), "John Doe", "john.doe@localhost", "123456789", johnsVehicles);
+        var sarahResult = Customer.Create(Guid.Parse("73a04dd3-c81a-4a54-9882-ef1017eb192d"), "Sarah Peter", "sarah.peter@localhost","987654321", sarahsVehicles);
+
+        if (johnResult.IsFailure)
+        {
+            _logger.LogError("Failed to create seed customer John: {Error}", johnResult.Errors);
+        }
+
+        if (sarahResult.IsFailure)
+        {
+            _logger.LogError("Failed to create seed customer Sarah: {Error}", sarahResult.Errors);
+        }
+
+        var customers = new[] { johnResult, sarahResult }
+            .Where(r => r.IsSuccess)
+            .Select(r => r.Value);
+
+        _context.Customers.AddRange(customers);
     }
-
-    List<Vehicle> johnsVehicles =
-    [
-        Vehicle.Create(Guid.Parse("61401e63-007b-4b1c-8914-9eb6e9bd95c5"), "Toyota", "Camry", 2020, "ABC123").Value,
-        Vehicle.Create(Guid.Parse("13c80914-41ad-4d46-b7bb-60f6c89ad01e"), "Honda", "Civic", 2018, "XYZ456").Value,
-    ];
-
-    List<Vehicle> sarahsVehicles =
-    [
-        Vehicle.Create(Guid.Parse("a04f329d-0f5a-46a0-beae-699c034ae401"), "Ford", "Focus", 2021, "DEF789").Value,
-        Vehicle.Create(Guid.Parse("cf60e95b-5752-4c26-aa07-31a34164606c"), "Chevrolet", "Malibu", 2019, "GHI012").Value,
-    ];
-    var johnResult = Customer.Create(Guid.Parse("f522bbe5-e3b1-4e2c-a8a3-c41550dcf39d"), "John Doe", "john.doe@localhost", "123456789", johnsVehicles);
-    var sarahResult = Customer.Create(Guid.Parse("73a04dd3-c81a-4a54-9882-ef1017eb192d"), "Sarah Peter", "sarah.peter@localhost","987654321", sarahsVehicles);
-
-    if (johnResult.IsFailure)
-    {
-        _logger.LogError("Failed to create seed customer John: {Error}", johnResult.Errors);
-    }
-
-    if (sarahResult.IsFailure)
-    {
-        _logger.LogError("Failed to create seed customer Sarah: {Error}", sarahResult.Errors);
-    }
-
-    var customers = new[] { johnResult, sarahResult }
-        .Where(r => r.IsSuccess)
-        .Select(r => r.Value);
-
-    _context.Customers.AddRange(customers);
-}
 
     private void SeedRepairTasks()
     {
@@ -366,5 +368,4 @@ private void SeedCustomers()
     private static DateTimeOffset RoundDownToQuarterHour(DateTimeOffset value) =>
         new(value.Year, value.Month, value.Day, value.Hour, value.Minute - (value.Minute % 15), 0, TimeSpan.Zero);
 
-    private sealed record SeedUser(string Id, string Email, string FirstName, string LastName, Role Role);
 }

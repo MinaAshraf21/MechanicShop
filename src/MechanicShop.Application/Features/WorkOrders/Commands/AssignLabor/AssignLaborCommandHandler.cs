@@ -21,15 +21,14 @@ public sealed class AssignLaborCommandHandler(
     var labor = await context.Employees
                         .Where(e => e.Role == Role.Labor)
                         .FirstOrDefaultAsync(l => l.Id == request.LaborId, cancellationToken);
-
-    var workOrder = await context.WorkOrders
-                        .FirstOrDefaultAsync(w => w.Id == request.WorkOrderId, cancellationToken);
-
     if(labor is null)
     {
       logger.LogError("Labor with Id: {id} was not found.", request.LaborId);
       return ApplicationErrors.LaborNotFound;
     }
+
+    var workOrder = await context.WorkOrders
+                        .FirstOrDefaultAsync(w => w.Id == request.WorkOrderId, cancellationToken);
     if(workOrder is null)
     {
       logger.LogError("work order with Id: {id} was not found.", request.WorkOrderId);

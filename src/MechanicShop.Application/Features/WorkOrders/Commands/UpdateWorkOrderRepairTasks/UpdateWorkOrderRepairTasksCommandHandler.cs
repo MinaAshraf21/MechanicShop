@@ -39,6 +39,8 @@ public sealed class UpdateWorkOrderRepairTasksCommandHandler(
       return ApplicationErrors.RepairTaskNotFound;
     }
 
+    var oldDuration = workOrder.EndAtUtc.Subtract(workOrder.StartAtUtc).Duration();
+
     var clearRepairTasksResult =  workOrder.ClearRepairTasks();
     if(clearRepairTasksResult.IsFailure)
       return clearRepairTasksResult.Errors!;
@@ -55,25 +57,27 @@ public sealed class UpdateWorkOrderRepairTasksCommandHandler(
     var duration = TimeSpan.FromMinutes(repairTasks.Sum(t => (int)t.EstimatedDuration));
     var endAt = workOrder.StartAtUtc.Add(duration);
 
-    if(workOrderPolicy.IsOutsideOperatingHours(workOrder.StartAtUtc, duration))
+    if(duration > oldDuration)
     {
-      logger.LogError("The Work Order time ({StartAt} ? {EndAt}) is outside of store operating hours.", workOrder.StartAtUtc, endAt);
-      return ApplicationErrors.WorkOrderOutsideOperatingHours(workOrder.StartAtUtc, endAt);
-    }
+      if(workOrderPolicy.IsOutsideOperatingHours(workOrder.StartAtUtc, duration))
+      {
+        logger.LogError("The Work Order time ({StartAt} ? {EndAt}) is outside of store operating hours.", workOrder.StartAtUtc, endAt);
+        return ApplicationErrors.WorkOrderOutsideOperatingHours(workOrder.StartAtUtc, endAt);
+      }
 
-    var checkSpotAvailability = await workOrderPolicy.CheckSpotAvailabilityAsync(workOrder.Spot, workOrder.StartAtUtc, endAt, workOrder.Id, cancellationToken);
-    if (checkSpotAvailability.IsFailure)
-    {
-      logger.LogError("Spot: {Spot} is not available.", workOrder.Spot.ToString());
-      return checkSpotAvailability.Errors!;
-    }
+      var checkSpotAvailability = await workOrderPolicy.CheckSpotAvailabilityAsync(workOrder.Spot, workOrder.StartAtUtc, endAt, workOrder.Id, cancellationToken);
+      if (checkSpotAvailability.IsFailure)
+      {
+        logger.LogError("Spot: {Spot} is not available.", workOrder.Spot.ToString());
+        return checkSpotAvailability.Errors!;
+      }
 
-
-    var isLaborOccupied = await workOrderPolicy.IsLaborOccupied(workOrder.LaborId, workOrder.Id, workOrder.StartAtUtc, endAt);
-    if (isLaborOccupied)
-    {
-      logger.LogError("Labor with Id '{LaborId}' is already occupied during the requested time.", workOrder.LaborId);
-      return ApplicationErrors.LaborOccupied;
+      var isLaborOccupied = await workOrderPolicy.IsLaborOccupied(workOrder.LaborId, workOrder.Id, workOrder.StartAtUtc, endAt);
+      if (isLaborOccupied)
+      {
+        logger.LogError("Labor with Id '{LaborId}' is already occupied during the requested time.", workOrder.LaborId);
+        return ApplicationErrors.LaborOccupied;
+      }
     }
 
     var updateTimingResult = workOrder.UpdateTiming(workOrder.StartAtUtc, endAt);

@@ -25,8 +25,8 @@ public sealed class WorkOrderPolicy(
                                 (excludeWorkOrderId != null ? w.Id != excludeWorkOrderId : true),
                                 ct);
     if(isOccupied)
-      return Result.Success;
-    return Error.Conflict("MechanicShop_SpotTimeSlot_Unavailable", "The selected time slot is unavailable for the requested services.");
+      return Error.Conflict("WorkOrder_SpotTimeSlot_Unavailable", "The selected time slot is unavailable for the requested services.");
+    return Result.Success;
   }
 
   public async Task<bool> IsLaborOccupied(Guid LaborId, Guid excludedWorkOrderId, DateTimeOffset startAtUtc, DateTimeOffset endAtUtc, CancellationToken ct = default)
@@ -42,13 +42,22 @@ public sealed class WorkOrderPolicy(
 
   public bool IsOutsideOperatingHours(DateTimeOffset startAt, TimeSpan duration)
   {
-    // var closingTime = options.Value.ClosingTime;
-    // var openingTime = options.Value.OpeningTime;
-    var opening = startAt.Date.Add(options.Value.OpeningTime.ToTimeSpan());
-    var closing = startAt.Date.Add(options.Value.ClosingTime.ToTimeSpan());
+    // // var closingTime = options.Value.ClosingTime;
+    // // var openingTime = options.Value.OpeningTime;
+    // var opening = startAt.Date.Add(options.Value.OpeningTime.ToTimeSpan());
+    // var closing = startAt.Date.Add(options.Value.ClosingTime.ToTimeSpan());
+    // var endAt = startAt + duration;
+
+    // // return TimeOnly.FromDateTime(startAt.DateTime) < openingTime || TimeOnly.FromDateTime(endAt.DateTime) > closingTime;
+    // return startAt < opening || endAt > closing;
+
+    var opening = new DateTimeOffset(startAt.Date, startAt.Offset)
+    .Add(options.Value.OpeningTime.ToTimeSpan());
+    var closing = new DateTimeOffset(startAt.Date, startAt.Offset)
+        .Add(options.Value.ClosingTime.ToTimeSpan());
+
     var endAt = startAt + duration;
 
-    // return TimeOnly.FromDateTime(startAt.DateTime) < openingTime || TimeOnly.FromDateTime(endAt.DateTime) > closingTime;
     return startAt < opening || endAt > closing;
   }
 

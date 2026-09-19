@@ -10,11 +10,11 @@ public class VehicleConfigurations : IEntityTypeConfiguration<Vehicle>
   {
     builder.HasKey(v => v.Id).IsClustered(false);
     builder.ToTable("Vehicles");
-
     builder.Property(v => v.Make).IsRequired().HasMaxLength(50);
     builder.Property(v => v.Model).IsRequired().HasMaxLength(50);
     builder.Property(v => v.LicensePlate).IsRequired();
     builder.Property(v => v.Year).IsRequired();
+    builder.HasIndex(v => v.LicensePlate).IsUnique();
 
     builder.HasOne(v => v.Customer).WithMany(c => c.Vehicles).HasForeignKey(v => v.CustomerId);
 

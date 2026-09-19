@@ -6,7 +6,7 @@ public sealed class AssignLaborCommandValidator : AbstractValidator<AssignLaborC
 {
   public AssignLaborCommandValidator()
   {
-    RuleFor(l => l.LaborId).NotEmpty().WithMessage("Labor id is required.");
-    RuleFor(l => l.WorkOrderId).NotEmpty().WithMessage("Work order id is required.");
+    RuleFor(l => l.LaborId).NotEmpty().WithMessage("Labor id is required.").WithErrorCode("Labor_Id_Empty");
+    RuleFor(l => l.WorkOrderId).NotEmpty().WithMessage("Work order id is required.").WithErrorCode("WorkOrder_Id_Empty");
   }
 }

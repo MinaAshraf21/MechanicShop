@@ -63,12 +63,12 @@ public sealed class CreateWorkOrderCommandHandler(
       return ApplicationErrors.WorkOrderOutsideOperatingHours(request.startAt, endAt);
     }
 
-    var checkMinRequirementResult = policy.ValidateMinimumRequirement(request.startAt, endAt);
-    if (checkMinRequirementResult.IsFailure)
-    {
-      logger.LogError("WorkOrder duration is shorter than the configured minimum.");
-      return checkMinRequirementResult.Errors!;
-    }
+    // var checkMinRequirementResult = policy.ValidateMinimumRequirement(request.startAt, endAt);
+    // if (checkMinRequirementResult.IsFailure)
+    // {
+    //   logger.LogError("WorkOrder duration is shorter than the configured minimum.");
+    //   return checkMinRequirementResult.Errors!;
+    // }
 
     var spotAvailabilityResult = await policy.CheckSpotAvailabilityAsync(request.Spot, request.startAt, endAt, null, cancellationToken);
     if (spotAvailabilityResult.IsFailure)
@@ -84,8 +84,8 @@ public sealed class CreateWorkOrderCommandHandler(
       return ApplicationErrors.LaborOccupied;
     }
 
-    bool isVehicleAlreadyScheduled = await policy.IsVehicleAlreadyScheduled(labor.Id, request.startAt, endAt);
-    if (isLaborOccupied)
+    bool isVehicleAlreadyScheduled = await policy.IsVehicleAlreadyScheduled(request.VehicleId, request.startAt, endAt);
+    if (isVehicleAlreadyScheduled)
     {
       logger.LogError("Vehicle with Id '{VehicleId}' already has an overlapping WorkOrder.", request.VehicleId);
       return ApplicationErrors.VehicleSchedulingConflict;

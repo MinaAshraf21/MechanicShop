@@ -10,7 +10,7 @@ public sealed class RelocateWorkOrderCommandValidator : AbstractValidator<Reloca
                           .IsInEnum()
                           .WithMessage("The spot must be a valid enum value [A, B, C, D].");
 
-    RuleFor(w =>w.WorkOrderId)
+    RuleFor(w => w.WorkOrderId)
                             .NotEmpty()
                             .WithErrorCode("WorkOrderId_Required")
                             .WithMessage("Work order Id is required.");
